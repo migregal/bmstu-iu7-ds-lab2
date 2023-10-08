@@ -10,7 +10,7 @@ import (
 	valid "github.com/asaskevich/govalidator"
 )
 
-func init() {
+func init() { //nolint: gochecknoinits
 	valid.SetFieldsRequiredByDefault(true)
 
 	valid.TagMap["positive_uint"] = valid.Validator(func(str string) bool {
@@ -19,7 +19,7 @@ func init() {
 			return false
 		}
 
-		if uint64(v) == 0 {
+		if v == 0 {
 			return false
 		}
 
@@ -52,6 +52,7 @@ func ParseErrors(err error) []ValidationError {
 	}
 
 	errs := []ValidationError{}
+
 	for _, str := range strings.Split(internal.Message.(string), ";") {
 		data := strings.SplitN(str, ":", 2)
 

@@ -37,11 +37,13 @@ func New(
 	return &Core{lg: lg, library: library, rating: rating, reservation: reservation}, nil
 }
 
-func (c *Core) GetLibraries(ctx context.Context, city string, page uint64, size uint64) (library.Libraries, error) {
+func (c *Core) GetLibraries(
+	ctx context.Context, city string, page uint64, size uint64,
+) (library.Infos, error) {
 	data, err := c.library.GetLibraries(ctx, city, page, size)
 	if err != nil {
 		c.lg.ErrorContext(ctx, "failed to get list of libraries", "error", err)
-		return library.Libraries{}, fmt.Errorf("failed to get list of libraries: %w", err)
+		return library.Infos{}, fmt.Errorf("failed to get list of libraries: %w", err)
 	}
 
 	return data, nil
@@ -49,11 +51,11 @@ func (c *Core) GetLibraries(ctx context.Context, city string, page uint64, size 
 
 func (c *Core) GetLibraryBooks(
 	ctx context.Context, libraryID string, showAll bool, page uint64, size uint64,
-) (library.LibraryBooks, error) {
+) (library.Books, error) {
 	books, err := c.library.GetBooks(ctx, libraryID, showAll, page, size)
 	if err != nil {
 		c.lg.ErrorContext(ctx, "failed to get list of library books", "error", err)
-		return library.LibraryBooks{}, fmt.Errorf("failed to get list of library books: %w", err)
+		return library.Books{}, fmt.Errorf("failed to get list of library books: %w", err)
 	}
 
 	return books, nil
@@ -73,7 +75,7 @@ func (c *Core) GetUserRating(
 
 func (c *Core) GetUserReservations(
 	ctx context.Context, username string,
-) ([]reservation.ReservationFullInfo, error) {
+) ([]reservation.FullInfo, error) {
 	resvs, err := c.reservation.GetUserReservations(ctx, username, "")
 	if err != nil {
 		c.lg.ErrorContext(ctx, "failed to get list of user reservations", "error", err)
@@ -85,8 +87,8 @@ func (c *Core) GetUserReservations(
 
 	var (
 		errs      = make(chan error, 2)
-		libraries library.Libraries
-		books     library.LibraryBooks
+		libraries library.Infos
+		books     library.Books
 	)
 
 	go func() {
@@ -127,24 +129,29 @@ func (c *Core) GetUserReservations(
 	default:
 	}
 
-	data := make([]reservation.ReservationFullInfo, 0, len(resvs))
+	data := make([]reservation.FullInfo, 0, len(resvs))
+
 	for _, resv := range resvs {
-		info := reservation.ReservationFullInfo{
+		info := reservation.FullInfo{
 			ID:       resv.ID,
 			Username: username,
 			Status:   resv.Status,
 			Start:    resv.Start,
 			End:      resv.End,
 		}
+
 		for _, library := range libraries.Items {
 			if resv.LibraryID == library.ID {
 				info.ReservedBook.Library = library
+
 				break
 			}
 		}
+
 		for _, book := range books.Items {
 			if resv.BookID == book.ID {
 				info.ReservedBook.Book = book
+
 				break
 			}
 		}
@@ -157,25 +164,25 @@ func (c *Core) GetUserReservations(
 
 func (c *Core) TakeBook(
 	ctx context.Context, username, libraryID, bookID string, end time.Time,
-) (reservation.ReservationFullInfo, error) {
+) (reservation.FullInfo, error) {
 	resvs, err := c.reservation.GetUserReservations(ctx, username, "RENTED")
 	if err != nil {
 		c.lg.Warn("failed to get reservations", "error", err)
-		return reservation.ReservationFullInfo{}, fmt.Errorf("failed to get user reservations: %w", err)
+		return reservation.FullInfo{}, fmt.Errorf("failed to get user reservations: %w", err)
 	}
 
 	rating, err := c.rating.GetUserRating(ctx, username)
 	if err != nil {
 		c.lg.Warn("failed to get rating", "error", err)
-		return reservation.ReservationFullInfo{}, fmt.Errorf("failed to get user rating: %w", err)
+		return reservation.FullInfo{}, fmt.Errorf("failed to get user rating: %w", err)
 	}
 
 	if uint64(len(resvs)) >= rating.Stars {
 		c.lg.Warn("insufficient rating", "rating", rating.Stars)
-		return reservation.ReservationFullInfo{}, ErrInsufficientRating
+		return reservation.FullInfo{}, ErrInsufficientRating
 	}
 
-	rsvtn := reservation.Reservation{
+	rsvtn := reservation.Info{
 		Username:  username,
 		Status:    "RENTED",
 		Start:     time.Now(),
@@ -187,16 +194,16 @@ func (c *Core) TakeBook(
 	rsvtn.ID, err = c.reservation.AddUserReservation(ctx, rsvtn)
 	if err != nil {
 		c.lg.Warn("failed to add reservation", "error", err)
-		return reservation.ReservationFullInfo{}, fmt.Errorf("failed to add reservation for obtained book: %w", err)
+		return reservation.FullInfo{}, fmt.Errorf("failed to add reservation for obtained book: %w", err)
 	}
 
 	book, err := c.library.ObtainBook(ctx, libraryID, bookID)
 	if err != nil {
 		c.lg.Warn("failed to update books amount", "error", err)
-		return reservation.ReservationFullInfo{}, fmt.Errorf("failed to obtain book from library: %w", err)
+		return reservation.FullInfo{}, fmt.Errorf("failed to obtain book from library: %w", err)
 	}
 
-	res := reservation.ReservationFullInfo{
+	res := reservation.FullInfo{
 		ID:           rsvtn.ID,
 		Username:     rsvtn.Username,
 		Status:       rsvtn.Status,
@@ -220,7 +227,8 @@ func (c *Core) ReturnBook(
 		return fmt.Errorf("failed to get user reservations: %w", err)
 	}
 
-	var resv reservation.Reservation
+	var resv reservation.Info
+
 	for _, r := range resvs {
 		if r.ID != reservationID {
 			continue
@@ -236,6 +244,7 @@ func (c *Core) ReturnBook(
 	status := "RETURNED"
 	if date.After(resv.End) {
 		status, bookIsOK = "EXPIRED", false
+
 		c.lg.Warn("reservation is expired")
 
 		if err = c.rating.UpdateUserRating(ctx, username, -10); err != nil {
@@ -258,6 +267,7 @@ func (c *Core) ReturnBook(
 
 	if condition != book.Condition {
 		bookIsOK = false
+
 		c.lg.Warn("book in wrong condition", "expected", book.Condition, "actual", condition)
 
 		if err = c.rating.UpdateUserRating(ctx, username, -10); err != nil {

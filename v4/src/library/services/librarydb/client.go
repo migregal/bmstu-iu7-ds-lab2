@@ -39,7 +39,9 @@ func New(lg *slog.Logger, cfg libraries.Config, probe *readiness.Probe) (*DB, er
 
 func (d *DB) GetLibraries(
 	ctx context.Context, city string, page uint64, size uint64,
-) (resp libraries.Libraries, err error) {
+) (libraries.Libraries, error) {
+	resp := libraries.Libraries{}
+
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: true})
 
 	stmt := tx.Offset(int((page - 1) * size)).Limit(int(size))
@@ -186,7 +188,9 @@ func (d *DB) GetLibraryBooksByIDs(
 
 func (d *DB) TakeBookFromLibrary(
 	ctx context.Context, libraryID, bookID string,
-) (resp libraries.ReservedBook, err error) {
+) (libraries.ReservedBook, error) {
+	resp := libraries.ReservedBook{}
+
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 
 	var libraryBook LibraryBook

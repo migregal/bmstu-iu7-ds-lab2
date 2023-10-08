@@ -22,21 +22,21 @@ func (_m *MockClient) EXPECT() *MockClient_Expecter {
 }
 
 // AddUserReservation provides a mock function with given fields: ctx, res
-func (_m *MockClient) AddUserReservation(ctx context.Context, res Reservation) (string, error) {
+func (_m *MockClient) AddUserReservation(ctx context.Context, res Info) (string, error) {
 	ret := _m.Called(ctx, res)
 
 	var r0 string
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, Reservation) (string, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, Info) (string, error)); ok {
 		return rf(ctx, res)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, Reservation) string); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, Info) string); ok {
 		r0 = rf(ctx, res)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, Reservation) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, Info) error); ok {
 		r1 = rf(ctx, res)
 	} else {
 		r1 = ret.Error(1)
@@ -52,14 +52,14 @@ type MockClient_AddUserReservation_Call struct {
 
 // AddUserReservation is a helper method to define mock.On call
 //   - ctx context.Context
-//   - res Reservation
+//   - res Info
 func (_e *MockClient_Expecter) AddUserReservation(ctx interface{}, res interface{}) *MockClient_AddUserReservation_Call {
 	return &MockClient_AddUserReservation_Call{Call: _e.mock.On("AddUserReservation", ctx, res)}
 }
 
-func (_c *MockClient_AddUserReservation_Call) Run(run func(ctx context.Context, res Reservation)) *MockClient_AddUserReservation_Call {
+func (_c *MockClient_AddUserReservation_Call) Run(run func(ctx context.Context, res Info)) *MockClient_AddUserReservation_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(Reservation))
+		run(args[0].(context.Context), args[1].(Info))
 	})
 	return _c
 }
@@ -69,25 +69,25 @@ func (_c *MockClient_AddUserReservation_Call) Return(_a0 string, _a1 error) *Moc
 	return _c
 }
 
-func (_c *MockClient_AddUserReservation_Call) RunAndReturn(run func(context.Context, Reservation) (string, error)) *MockClient_AddUserReservation_Call {
+func (_c *MockClient_AddUserReservation_Call) RunAndReturn(run func(context.Context, Info) (string, error)) *MockClient_AddUserReservation_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetUserReservations provides a mock function with given fields: ctx, username, status
-func (_m *MockClient) GetUserReservations(ctx context.Context, username string, status string) ([]Reservation, error) {
+func (_m *MockClient) GetUserReservations(ctx context.Context, username string, status string) ([]Info, error) {
 	ret := _m.Called(ctx, username, status)
 
-	var r0 []Reservation
+	var r0 []Info
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) ([]Reservation, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) ([]Info, error)); ok {
 		return rf(ctx, username, status)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) []Reservation); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) []Info); ok {
 		r0 = rf(ctx, username, status)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]Reservation)
+			r0 = ret.Get(0).([]Info)
 		}
 	}
 
@@ -120,12 +120,12 @@ func (_c *MockClient_GetUserReservations_Call) Run(run func(ctx context.Context,
 	return _c
 }
 
-func (_c *MockClient_GetUserReservations_Call) Return(_a0 []Reservation, _a1 error) *MockClient_GetUserReservations_Call {
+func (_c *MockClient_GetUserReservations_Call) Return(_a0 []Info, _a1 error) *MockClient_GetUserReservations_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockClient_GetUserReservations_Call) RunAndReturn(run func(context.Context, string, string) ([]Reservation, error)) *MockClient_GetUserReservations_Call {
+func (_c *MockClient_GetUserReservations_Call) RunAndReturn(run func(context.Context, string, string) ([]Info, error)) *MockClient_GetUserReservations_Call {
 	_c.Call.Return(run)
 	return _c
 }

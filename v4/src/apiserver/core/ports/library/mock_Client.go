@@ -22,18 +22,18 @@ func (_m *MockClient) EXPECT() *MockClient_Expecter {
 }
 
 // GetBooks provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4
-func (_m *MockClient) GetBooks(_a0 context.Context, _a1 string, _a2 bool, _a3 uint64, _a4 uint64) (LibraryBooks, error) {
+func (_m *MockClient) GetBooks(_a0 context.Context, _a1 string, _a2 bool, _a3 uint64, _a4 uint64) (Books, error) {
 	ret := _m.Called(_a0, _a1, _a2, _a3, _a4)
 
-	var r0 LibraryBooks
+	var r0 Books
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, bool, uint64, uint64) (LibraryBooks, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, bool, uint64, uint64) (Books, error)); ok {
 		return rf(_a0, _a1, _a2, _a3, _a4)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, bool, uint64, uint64) LibraryBooks); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, bool, uint64, uint64) Books); ok {
 		r0 = rf(_a0, _a1, _a2, _a3, _a4)
 	} else {
-		r0 = ret.Get(0).(LibraryBooks)
+		r0 = ret.Get(0).(Books)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string, bool, uint64, uint64) error); ok {
@@ -67,29 +67,29 @@ func (_c *MockClient_GetBooks_Call) Run(run func(_a0 context.Context, _a1 string
 	return _c
 }
 
-func (_c *MockClient_GetBooks_Call) Return(_a0 LibraryBooks, _a1 error) *MockClient_GetBooks_Call {
+func (_c *MockClient_GetBooks_Call) Return(_a0 Books, _a1 error) *MockClient_GetBooks_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockClient_GetBooks_Call) RunAndReturn(run func(context.Context, string, bool, uint64, uint64) (LibraryBooks, error)) *MockClient_GetBooks_Call {
+func (_c *MockClient_GetBooks_Call) RunAndReturn(run func(context.Context, string, bool, uint64, uint64) (Books, error)) *MockClient_GetBooks_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetBooksByIDs provides a mock function with given fields: _a0, _a1
-func (_m *MockClient) GetBooksByIDs(_a0 context.Context, _a1 []string) (LibraryBooks, error) {
+func (_m *MockClient) GetBooksByIDs(_a0 context.Context, _a1 []string) (Books, error) {
 	ret := _m.Called(_a0, _a1)
 
-	var r0 LibraryBooks
+	var r0 Books
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, []string) (LibraryBooks, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, []string) (Books, error)); ok {
 		return rf(_a0, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, []string) LibraryBooks); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, []string) Books); ok {
 		r0 = rf(_a0, _a1)
 	} else {
-		r0 = ret.Get(0).(LibraryBooks)
+		r0 = ret.Get(0).(Books)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, []string) error); ok {
@@ -120,29 +120,29 @@ func (_c *MockClient_GetBooksByIDs_Call) Run(run func(_a0 context.Context, _a1 [
 	return _c
 }
 
-func (_c *MockClient_GetBooksByIDs_Call) Return(_a0 LibraryBooks, _a1 error) *MockClient_GetBooksByIDs_Call {
+func (_c *MockClient_GetBooksByIDs_Call) Return(_a0 Books, _a1 error) *MockClient_GetBooksByIDs_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockClient_GetBooksByIDs_Call) RunAndReturn(run func(context.Context, []string) (LibraryBooks, error)) *MockClient_GetBooksByIDs_Call {
+func (_c *MockClient_GetBooksByIDs_Call) RunAndReturn(run func(context.Context, []string) (Books, error)) *MockClient_GetBooksByIDs_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetLibraries provides a mock function with given fields: _a0, _a1, _a2, _a3
-func (_m *MockClient) GetLibraries(_a0 context.Context, _a1 string, _a2 uint64, _a3 uint64) (Libraries, error) {
+func (_m *MockClient) GetLibraries(_a0 context.Context, _a1 string, _a2 uint64, _a3 uint64) (Infos, error) {
 	ret := _m.Called(_a0, _a1, _a2, _a3)
 
-	var r0 Libraries
+	var r0 Infos
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, uint64, uint64) (Libraries, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, uint64, uint64) (Infos, error)); ok {
 		return rf(_a0, _a1, _a2, _a3)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, uint64, uint64) Libraries); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, uint64, uint64) Infos); ok {
 		r0 = rf(_a0, _a1, _a2, _a3)
 	} else {
-		r0 = ret.Get(0).(Libraries)
+		r0 = ret.Get(0).(Infos)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string, uint64, uint64) error); ok {
@@ -175,29 +175,29 @@ func (_c *MockClient_GetLibraries_Call) Run(run func(_a0 context.Context, _a1 st
 	return _c
 }
 
-func (_c *MockClient_GetLibraries_Call) Return(_a0 Libraries, _a1 error) *MockClient_GetLibraries_Call {
+func (_c *MockClient_GetLibraries_Call) Return(_a0 Infos, _a1 error) *MockClient_GetLibraries_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockClient_GetLibraries_Call) RunAndReturn(run func(context.Context, string, uint64, uint64) (Libraries, error)) *MockClient_GetLibraries_Call {
+func (_c *MockClient_GetLibraries_Call) RunAndReturn(run func(context.Context, string, uint64, uint64) (Infos, error)) *MockClient_GetLibraries_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetLibrariesByIDs provides a mock function with given fields: _a0, _a1
-func (_m *MockClient) GetLibrariesByIDs(_a0 context.Context, _a1 []string) (Libraries, error) {
+func (_m *MockClient) GetLibrariesByIDs(_a0 context.Context, _a1 []string) (Infos, error) {
 	ret := _m.Called(_a0, _a1)
 
-	var r0 Libraries
+	var r0 Infos
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, []string) (Libraries, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, []string) (Infos, error)); ok {
 		return rf(_a0, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, []string) Libraries); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, []string) Infos); ok {
 		r0 = rf(_a0, _a1)
 	} else {
-		r0 = ret.Get(0).(Libraries)
+		r0 = ret.Get(0).(Infos)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, []string) error); ok {
@@ -228,12 +228,12 @@ func (_c *MockClient_GetLibrariesByIDs_Call) Run(run func(_a0 context.Context, _
 	return _c
 }
 
-func (_c *MockClient_GetLibrariesByIDs_Call) Return(_a0 Libraries, _a1 error) *MockClient_GetLibrariesByIDs_Call {
+func (_c *MockClient_GetLibrariesByIDs_Call) Return(_a0 Infos, _a1 error) *MockClient_GetLibrariesByIDs_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockClient_GetLibrariesByIDs_Call) RunAndReturn(run func(context.Context, []string) (Libraries, error)) *MockClient_GetLibrariesByIDs_Call {
+func (_c *MockClient_GetLibrariesByIDs_Call) RunAndReturn(run func(context.Context, []string) (Infos, error)) *MockClient_GetLibrariesByIDs_Call {
 	_c.Call.Return(run)
 	return _c
 }

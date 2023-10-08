@@ -4,11 +4,11 @@ import "context"
 
 type Config struct {
 	Host string
-	Port int
+	Port string
 }
 
 type Client interface {
-	GetUserReservations(ctx context.Context, username, status string) ([]Reservation, error)
-	AddUserReservation(ctx context.Context, res Reservation) (string, error)
+	GetUserReservations(ctx context.Context, username, status string) ([]Info, error)
+	AddUserReservation(ctx context.Context, res Info) (string, error)
 	SetUserReservationStatus(ctx context.Context, id, status string) error
 }

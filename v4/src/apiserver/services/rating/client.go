@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"strconv"
 	"time"
@@ -15,7 +16,7 @@ import (
 	v1 "github.com/migregal/bmstu-iu7-ds-lab2/rating/api/http/v1"
 )
 
-var probeKey = "http-rating-client"
+const probeKey = "http-rating-client"
 
 type Client struct {
 	lg *slog.Logger
@@ -30,7 +31,7 @@ func New(lg *slog.Logger, cfg rating.Config, probe *readiness.Probe) (*Client, e
 			IdleConnTimeout:    30 * time.Second,
 			DisableCompression: true,
 		}).
-		SetBaseURL(fmt.Sprintf("http://%s:%d", cfg.Host, cfg.Port))
+		SetBaseURL(fmt.Sprintf("http://%s", net.JoinHostPort(cfg.Host, cfg.Port)))
 
 	c := Client{
 		lg:   lg,

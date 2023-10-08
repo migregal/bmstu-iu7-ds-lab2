@@ -7,7 +7,7 @@ import (
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/rating"
 )
 
-type Reservation struct {
+type Info struct {
 	ID        string
 	Username  string
 	Status    string
@@ -17,7 +17,7 @@ type Reservation struct {
 	LibraryID string
 }
 
-type ReservationFullInfo struct {
+type FullInfo struct {
 	ID           string
 	Username     string
 	Status       string

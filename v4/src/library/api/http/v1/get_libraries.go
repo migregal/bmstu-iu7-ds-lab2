@@ -27,14 +27,17 @@ func (a *api) GetLibraries(c echo.Context, req LibrariesRequest) error {
 	}
 
 	var data libraries.Libraries
+
 	if req.City != "" {
 		var err error
+
 		data, err = a.core.GetLibraries(c.Request().Context(), req.City, req.Page, req.Size)
 		if err != nil {
 			return c.NoContent(http.StatusInternalServerError)
 		}
 	} else {
 		var ids []string
+
 		err := json.Unmarshal([]byte(req.IDs), &ids)
 		if err != nil {
 			return c.NoContent(http.StatusInternalServerError)
@@ -46,8 +49,13 @@ func (a *api) GetLibraries(c echo.Context, req LibrariesRequest) error {
 		}
 	}
 
-	resp := LibrariesResponse{Items: make([]Library, 0, len(data.Items))}
-	resp.Total = data.Total
+	resp := LibrariesResponse{
+		PaginatedResponse: PaginatedResponse{
+			Total: data.Total,
+		},
+		Items: make([]Library, 0, len(data.Items)),
+	}
+
 	for _, lib := range data.Items {
 		resp.Items = append(resp.Items, Library(lib))
 	}

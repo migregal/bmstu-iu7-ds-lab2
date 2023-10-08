@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"time"
 
@@ -15,7 +16,7 @@ import (
 	v1 "github.com/migregal/bmstu-iu7-ds-lab2/reservation/api/http/v1"
 )
 
-var probeKey = "http-reservation-client"
+const probeKey = "http-reservation-client"
 
 type Client struct {
 	lg *slog.Logger
@@ -30,7 +31,7 @@ func New(lg *slog.Logger, cfg reservation.Config, probe *readiness.Probe) (*Clie
 			IdleConnTimeout:    30 * time.Second,
 			DisableCompression: true,
 		}).
-		SetBaseURL(fmt.Sprintf("http://%s:%d", cfg.Host, cfg.Port))
+		SetBaseURL(fmt.Sprintf("http://%s", net.JoinHostPort(cfg.Host, cfg.Port)))
 
 	c := Client{
 		lg:   lg,
@@ -44,7 +45,7 @@ func New(lg *slog.Logger, cfg reservation.Config, probe *readiness.Probe) (*Clie
 
 func (c *Client) GetUserReservations(
 	ctx context.Context, username, status string,
-) ([]reservation.Reservation, error) {
+) ([]reservation.Info, error) {
 	q := map[string]string{}
 	if status != "" {
 		q["status"] = status
@@ -64,11 +65,11 @@ func (c *Client) GetUserReservations(
 		return nil, fmt.Errorf("invalid status code: %d", resp.StatusCode())
 	}
 
-	data := resp.Result().(*[]v1.Reservation)
+	data, _ := resp.Result().(*[]v1.Reservation)
 
-	reservs := []reservation.Reservation{}
+	reservs := []reservation.Info{}
 	for _, res := range *data {
-		reservs = append(reservs, reservation.Reservation{
+		reservs = append(reservs, reservation.Info{
 			ID:        res.ID,
 			Username:  username,
 			Status:    res.Status,
@@ -82,7 +83,7 @@ func (c *Client) GetUserReservations(
 	return reservs, nil
 }
 
-func (c *Client) AddUserReservation(ctx context.Context, rsrvtn reservation.Reservation) (string, error) {
+func (c *Client) AddUserReservation(ctx context.Context, rsrvtn reservation.Info) (string, error) {
 	body, err := json.Marshal(v1.AddReservationRequest{
 		Status:    rsrvtn.Status,
 		Start:     rsrvtn.Start,
@@ -108,7 +109,7 @@ func (c *Client) AddUserReservation(ctx context.Context, rsrvtn reservation.Rese
 		return "", fmt.Errorf("invalid status code: %d", resp.StatusCode())
 	}
 
-	data := resp.Result().(*v1.AddReservationResponse)
+	data, _ := resp.Result().(*v1.AddReservationResponse)
 
 	return data.ID, nil
 }

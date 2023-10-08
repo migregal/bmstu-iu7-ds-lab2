@@ -66,6 +66,7 @@ func (d *DB) AddReservation(
 	}
 
 	tx.Commit()
+
 	return r.ReservationID.String(), nil
 }
 
@@ -75,10 +76,13 @@ func (d *DB) GetUserReservations(
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: true})
 
 	var data []Reservation
+
 	stmt := tx.Where("username = ?", username)
+
 	if status != "" {
 		stmt = stmt.Where("status = ?", status)
 	}
+
 	if err := stmt.Find(&data).Error; err != nil {
 		tx.Rollback()
 

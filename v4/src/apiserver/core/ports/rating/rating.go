@@ -4,7 +4,7 @@ import "context"
 
 type Config struct {
 	Host string
-	Port int
+	Port string
 }
 
 type Client interface {

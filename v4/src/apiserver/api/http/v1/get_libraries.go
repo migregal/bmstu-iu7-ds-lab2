@@ -28,6 +28,7 @@ func (a *api) GetLibraries(c echo.Context, req LibrariesRequest) error {
 	for _, lib := range data.Items {
 		resp.Items = append(resp.Items, Library(lib))
 	}
+
 	resp.Total = data.Total
 	resp.Page = req.Page
 	resp.PageSize = req.Size

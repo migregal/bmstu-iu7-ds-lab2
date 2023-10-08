@@ -55,12 +55,16 @@ type Time struct {
 	time.Time `valid:"required"`
 }
 
-func (ct *Time) UnmarshalJSON(b []byte) (err error) {
+func (ct *Time) UnmarshalJSON(b []byte) error {
+	var err error
+
 	s := strings.Trim(string(b), "\"")
 	if s == "null" {
 		ct.Time = time.Time{}
-		return
+		return nil
 	}
+
 	ct.Time, err = time.Parse(time.DateOnly, s)
-	return
+
+	return err
 }

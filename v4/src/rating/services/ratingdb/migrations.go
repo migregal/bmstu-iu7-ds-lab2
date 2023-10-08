@@ -39,7 +39,7 @@ func runMigrations(lg *slog.Logger, db *gorm.DB, probe *readiness.Probe, interva
 	models := []migrationItem{
 		{"rating", Rating{}},
 	}
-	for !migrateModels(lg, db, models) { //nolint: revive
+	for !migrateModels(lg, db, models) {
 		time.Sleep(interval)
 	}
 

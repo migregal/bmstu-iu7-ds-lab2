@@ -13,11 +13,11 @@ import (
 )
 
 type Core interface {
-	GetLibraries(context.Context, string, uint64, uint64) (library.Libraries, error)
-	GetLibraryBooks(context.Context, string, bool, uint64, uint64) (library.LibraryBooks, error)
+	GetLibraries(context.Context, string, uint64, uint64) (library.Infos, error)
+	GetLibraryBooks(context.Context, string, bool, uint64, uint64) (library.Books, error)
 	GetUserRating(ctx context.Context, username string) (rating.Rating, error)
-	GetUserReservations(context.Context, string) ([]reservation.ReservationFullInfo, error)
-	TakeBook(ctx context.Context, usename, libraryID, bookID string, end time.Time) (reservation.ReservationFullInfo, error)
+	GetUserReservations(context.Context, string) ([]reservation.FullInfo, error)
+	TakeBook(ctx context.Context, usename, libraryID, bookID string, end time.Time) (reservation.FullInfo, error)
 	ReturnBook(ctx context.Context, username, reservationID, condition string, date time.Time) error
 }
 
@@ -48,11 +48,11 @@ func WrapRequest[T any](handler func(echo.Context, T) error) func(echo.Context) 
 
 		var req T
 		if err := binder.Bind(&req, c); err != nil {
-			return c.String(http.StatusBadRequest, "bad request")
+			return c.String(http.StatusBadRequest, "bad request") //nolint: wrapcheck
 		}
 
 		if err := binder.BindHeaders(c, &req); err != nil {
-			return c.String(http.StatusBadRequest, "bad request")
+			return c.String(http.StatusBadRequest, "bad request")//nolint: wrapcheck
 		}
 
 		if err := c.Validate(req); err != nil {

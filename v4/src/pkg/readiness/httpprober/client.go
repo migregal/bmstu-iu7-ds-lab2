@@ -28,11 +28,13 @@ func (c Prober) Ping(key string, probe *readiness.Probe) {
 		resp, err := c.conn.R().Get("/readiness")
 		if err != nil {
 			c.lg.Error("[startup] readiness check failed", "error", err)
+
 			continue
 		}
 
 		if resp.StatusCode() != http.StatusOK {
 			c.lg.Error("[startup] readiness check return bad status code", "status", resp.StatusCode())
+
 			continue
 		}
 

@@ -2,14 +2,14 @@ package library
 
 import "github.com/migregal/bmstu-iu7-ds-lab2/pkg/collections"
 
-type Library struct {
+type Info struct {
 	ID      string
 	Name    string
 	Address string
 	City    string
 }
 
-type Libraries collections.Countable[Library]
+type Infos collections.Countable[Info]
 
 type Book struct {
 	ID        string
@@ -20,9 +20,9 @@ type Book struct {
 	Available uint64
 }
 
-type LibraryBooks collections.Countable[Book]
+type Books collections.Countable[Book]
 
 type ReservedBook struct {
 	Book    Book
-	Library Library
+	Library Info
 }

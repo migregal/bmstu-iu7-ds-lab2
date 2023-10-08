@@ -6,9 +6,7 @@ import (
 	"time"
 )
 
-var (
-	ErrNotFound = errors.New("not found")
-)
+var	ErrNotFound = errors.New("not found")
 
 type Config struct {
 	User              string

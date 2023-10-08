@@ -45,7 +45,7 @@ func runMigrations(
 		{"books", Book{}},
 		{"library_books", LibraryBook{}},
 	}
-	for !migrateModels(lg, db, models) { //nolint: revive
+	for !migrateModels(lg, db, models) {
 		time.Sleep(interval)
 	}
 

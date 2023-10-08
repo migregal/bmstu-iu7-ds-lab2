@@ -28,10 +28,13 @@ func (a *api) GetLibraryBooks(c echo.Context, req BooksRequest) error {
 	}
 
 	var data libraries.LibraryBooks
+
 	if req.LibraryID != "" {
 		var err error
 
-		data, err = a.core.GetLibraryBooks(c.Request().Context(), req.LibraryID, req.ShawAll, req.Page, req.Size)
+		data, err = a.core.GetLibraryBooks(
+			c.Request().Context(), req.LibraryID, req.ShawAll, req.Page, req.Size,
+		)
 		if err != nil {
 			return c.NoContent(http.StatusInternalServerError)
 		}
@@ -48,8 +51,13 @@ func (a *api) GetLibraryBooks(c echo.Context, req BooksRequest) error {
 		}
 	}
 
-	resp := BooksResponse{Items: make([]Book, 0, len(data.Items))}
-	resp.Total = data.Total
+	resp := BooksResponse{
+		PaginatedResponse: PaginatedResponse{
+			Total: data.Total,
+		},
+		Items: make([]Book, 0, len(data.Items)),
+	}
+
 	for _, book := range data.Items {
 		resp.Items = append(resp.Items, Book(book))
 	}
