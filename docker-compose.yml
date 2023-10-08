@@ -24,7 +24,7 @@ services:
       retries: 5
 
   rating:
-    image: migregal/library-ratingapi:${TAG}
+    image: migregal/library-ratingapi:latest
     build:
       context: .
       dockerfile: v4/src/docker/rating/Dockerfile
@@ -47,7 +47,7 @@ services:
       start_period: 10s
 
   library:
-    image: migregal/library-libraryapi:${TAG}
+    image: migregal/library-libraryapi:latest
     build:
       context: .
       dockerfile: v4/src/docker/library/Dockerfile
@@ -70,7 +70,7 @@ services:
       start_period: 10s
 
   reservation:
-    image: migregal/library-reservationapi:${TAG}
+    image: migregal/library-reservationapi:latest
     build:
       context: .
       dockerfile: v4/src/docker/reservation/Dockerfile
@@ -93,7 +93,7 @@ services:
       start_period: 10s
 
   apiserver:
-    image: migregal/library-apiserver:${TAG}
+    image: migregal/library-apiserver:latest
     build:
       context: .
       dockerfile: v4/src/docker/apiserver/Dockerfile
