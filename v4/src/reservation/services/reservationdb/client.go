@@ -37,7 +37,7 @@ func New(lg *slog.Logger, cfg reservations.Config, probe *readiness.Probe) (*DB,
 }
 
 func (d *DB) AddReservation(
-	ctx context.Context, username string, data reservations.Reservation,
+	_ context.Context, username string, data reservations.Reservation,
 ) (string, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 
@@ -71,7 +71,7 @@ func (d *DB) AddReservation(
 }
 
 func (d *DB) GetUserReservations(
-	ctx context.Context, username, status string,
+	_ context.Context, username, status string,
 ) ([]reservations.Reservation, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: true})
 
@@ -106,7 +106,7 @@ func (d *DB) GetUserReservations(
 	return resp, nil
 }
 
-func (d *DB) UpdateUserReservation(ctx context.Context, id, status string) error {
+func (d *DB) UpdateUserReservation(_ context.Context, id, status string) error {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 
 	stmt := tx.Model(&Reservation{}).Where("reservation_uid = ?", id)

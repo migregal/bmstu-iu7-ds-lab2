@@ -58,7 +58,7 @@ func (c *Client) GetUserRating(
 		return rating.Rating{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
 	}
 
-	data := resp.Result().(*v1.RatingResponse)
+	data, _ := resp.Result().(*v1.RatingResponse)
 
 	rating := rating.Rating(*data)
 

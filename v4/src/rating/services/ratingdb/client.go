@@ -45,8 +45,9 @@ func (d *DB) GetUserRating(
 		Username: username,
 		Stars:    1,
 	}
-	stmt := tx.Where("username = ?", username)
-	if err := stmt.First(&data).Error; err != nil {
+
+	err := tx.Where("username = ?", username).First(&data).Error
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			if err = tx.Create(&data).Error; err != nil {
 				tx.Rollback()

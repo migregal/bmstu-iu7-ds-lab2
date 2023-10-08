@@ -18,8 +18,8 @@ type Reservation struct {
 	Status    string    `json:"status" valid:"in(RENTED|RETURNED|EXPIRED)"`
 	Start     time.Time `json:"startDate"`
 	End       time.Time `json:"tillDate"`
-	BookID    string    `json:"book_id"`
-	LibraryID string    `json:"library_id"`
+	BookID    string    `json:"bookId"`
+	LibraryID string    `json:"libraryId"`
 }
 
 func (a *api) GetReservations(c echo.Context, req ReservationsRequest) error {

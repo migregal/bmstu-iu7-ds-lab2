@@ -47,7 +47,7 @@ func New(lg *slog.Logger, cfg library.Config, probe *readiness.Probe) (*Client, 
 }
 
 func (c *Client) GetLibraries(
-	ctx context.Context, city string, page uint64, size uint64,
+	_ context.Context, city string, page uint64, size uint64,
 ) (library.Infos, error) {
 	q := map[string]string{
 		"city": city,
@@ -81,7 +81,10 @@ func (c *Client) GetLibraries(
 	return libraries, nil
 }
 
-func (c *Client) GetLibrariesByIDs(ctx context.Context, ids []string) (library.Infos, error) {
+//nolint: dupl
+func (c *Client) GetLibrariesByIDs(
+	_ context.Context, ids []string,
+) (library.Infos, error) {
 	id, err := json.Marshal(ids)
 	if err != nil {
 		return library.Infos{}, fmt.Errorf("failed to marshal data: %w", err)
@@ -110,19 +113,20 @@ func (c *Client) GetLibrariesByIDs(ctx context.Context, ids []string) (library.I
 }
 
 func (c *Client) GetBooks(
-	ctx context.Context, libraryID string, showAll bool, page uint64, size uint64,
+	_ context.Context, libraryID string, showAll bool, page uint64, size uint64,
 ) (library.Books, error) {
-	q := map[string]string{}
-	if showAll {
-		q["show_all"] = "1"
-	}
-
-	q["page"] = strconv.FormatUint(page, 10)
-
 	if size == 0 {
 		size = math.MaxUint64
 	}
-	q["size"] = strconv.FormatUint(size, 10)
+
+	q := map[string]string{
+		"size": strconv.FormatUint(size, 10),
+		"page": strconv.FormatUint(page, 10),
+	}
+
+	if showAll {
+		q["show_all"] = "1"
+	}
 
 	resp, err := c.conn.R().
 		SetQueryParams(q).
@@ -147,7 +151,10 @@ func (c *Client) GetBooks(
 	return books, nil
 }
 
-func (c *Client) GetBooksByIDs(ctx context.Context, ids []string) (library.Books, error) {
+//nolint: dupl
+func (c *Client) GetBooksByIDs(
+	_ context.Context, ids []string,
+) (library.Books, error) {
 	id, err := json.Marshal(ids)
 	if err != nil {
 		return library.Books{}, fmt.Errorf("failed to marshal data: %w", err)
@@ -175,7 +182,9 @@ func (c *Client) GetBooksByIDs(ctx context.Context, ids []string) (library.Books
 	return books, nil
 }
 
-func (c *Client) ObtainBook(ctx context.Context, libraryID string, bookID string) (library.ReservedBook, error) {
+func (c *Client) ObtainBook(
+	_ context.Context, libraryID string, bookID string,
+) (library.ReservedBook, error) {
 	body, err := json.Marshal(v1.TakeBookRequest{
 		BookID:    bookID,
 		LibraryID: libraryID,
@@ -197,7 +206,7 @@ func (c *Client) ObtainBook(ctx context.Context, libraryID string, bookID string
 		return library.ReservedBook{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
 	}
 
-	data := resp.Result().(*v1.TakeBookResponse)
+	data, _ := resp.Result().(*v1.TakeBookResponse)
 
 	return library.ReservedBook{
 		Book:    library.Book(data.Book),
@@ -205,7 +214,9 @@ func (c *Client) ObtainBook(ctx context.Context, libraryID string, bookID string
 	}, nil
 }
 
-func (c *Client) ReturnBook(ctx context.Context, libraryID string, bookID string) (library.Book, error) {
+func (c *Client) ReturnBook(
+	_ context.Context, libraryID string, bookID string,
+) (library.Book, error) {
 	body, err := json.Marshal(v1.TakeBookRequest{
 		BookID:    bookID,
 		LibraryID: libraryID,
@@ -229,7 +240,7 @@ func (c *Client) ReturnBook(ctx context.Context, libraryID string, bookID string
 		return library.Book{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
 	}
 
-	data := resp.Result().(*v1.ReturnBookResponse)
+	data, _ := resp.Result().(*v1.ReturnBookResponse)
 
 	return library.Book(data.Book), nil
 }

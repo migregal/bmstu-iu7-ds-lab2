@@ -2,14 +2,14 @@ package v1
 
 import (
 	"context"
-	"net/http"
+	"log/slog"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/library"
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/rating"
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/reservation"
-	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/httpvalidator"
+	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/httpwrapper"
 )
 
 type Core interface {
@@ -21,49 +21,23 @@ type Core interface {
 	ReturnBook(ctx context.Context, username, reservationID, condition string, date time.Time) error
 }
 
-func InitListener(mx *echo.Echo, core Core) error {
-	gr := mx.Group("/api/v1")
-
-	a := api{core: core}
-
-	gr.GET("/libraries", WrapRequest(a.GetLibraries))
-	gr.GET("/libraries/:id/books", WrapRequest(a.GetLibraryBooks))
-
-	gr.GET("/reservations", WrapRequest(a.GetReservations))
-	gr.POST("/reservations", WrapRequest(a.TakeBook))
-	gr.POST("/reservations/:id/return", WrapRequest(a.ReturnBook))
-
-	gr.GET("/rating", WrapRequest(a.GetRating))
-
-	return nil
-}
-
 type api struct {
 	core Core
 }
 
-func WrapRequest[T any](handler func(echo.Context, T) error) func(echo.Context) error {
-	return func(c echo.Context) error {
-		binder := &echo.DefaultBinder{}
+func InitListener(mx *echo.Echo, lg *slog.Logger, core Core) error {
+	gr := mx.Group("/api/v1")
 
-		var req T
-		if err := binder.Bind(&req, c); err != nil {
-			return c.String(http.StatusBadRequest, "bad request") //nolint: wrapcheck
-		}
+	a := api{core: core}
 
-		if err := binder.BindHeaders(c, &req); err != nil {
-			return c.String(http.StatusBadRequest, "bad request")//nolint: wrapcheck
-		}
+	gr.GET("/libraries", httpwrapper.WrapRequest(lg, a.GetLibraries))
+	gr.GET("/libraries/:id/books", httpwrapper.WrapRequest(lg, a.GetLibraryBooks))
 
-		if err := c.Validate(req); err != nil {
-			resp := ValidationErrorResponse{
-				http.StatusText(http.StatusBadRequest),
-				httpvalidator.ParseErrors(err),
-			}
+	gr.GET("/reservations", httpwrapper.WrapRequest(lg, a.GetReservations))
+	gr.POST("/reservations", httpwrapper.WrapRequest(lg, a.TakeBook))
+	gr.POST("/reservations/:id/return", httpwrapper.WrapRequest(lg, a.ReturnBook))
 
-			return c.JSON(http.StatusBadRequest, resp)
-		}
+	gr.GET("/rating", httpwrapper.WrapRequest(lg, a.GetRating))
 
-		return handler(c, req)
-	}
+	return nil
 }

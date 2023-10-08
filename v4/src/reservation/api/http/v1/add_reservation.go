@@ -13,8 +13,8 @@ type AddReservationRequest struct {
 	Status        string    `json:"status," valid:"in(RENTED|RETURNED|EXPIRED)"`
 	Start         time.Time `json:"startDate" valid:"required"`
 	End           time.Time `json:"tillDate" valid:"required"`
-	BookID        string    `json:"book_id" valid:"uuidv4,required"`
-	LibraryID     string    `json:"library_id" valid:"uuidv4,required"`
+	BookID        string    `json:"bookId" valid:"uuidv4,required"`
+	LibraryID     string    `json:"libraryId" valid:"uuidv4,required"`
 }
 
 type AddReservationResponse struct {

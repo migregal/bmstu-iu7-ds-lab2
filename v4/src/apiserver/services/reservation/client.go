@@ -44,7 +44,7 @@ func New(lg *slog.Logger, cfg reservation.Config, probe *readiness.Probe) (*Clie
 }
 
 func (c *Client) GetUserReservations(
-	ctx context.Context, username, status string,
+	_ context.Context, username, status string,
 ) ([]reservation.Info, error) {
 	q := map[string]string{}
 	if status != "" {
@@ -56,7 +56,6 @@ func (c *Client) GetUserReservations(
 		SetQueryParams(q).
 		SetResult(&[]v1.Reservation{}).
 		Get("/api/v1/reservations")
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute http request: %w", err)
 	}
@@ -83,7 +82,7 @@ func (c *Client) GetUserReservations(
 	return reservs, nil
 }
 
-func (c *Client) AddUserReservation(ctx context.Context, rsrvtn reservation.Info) (string, error) {
+func (c *Client) AddUserReservation(_ context.Context, rsrvtn reservation.Info) (string, error) {
 	body, err := json.Marshal(v1.AddReservationRequest{
 		Status:    rsrvtn.Status,
 		Start:     rsrvtn.Start,
@@ -115,7 +114,7 @@ func (c *Client) AddUserReservation(ctx context.Context, rsrvtn reservation.Info
 }
 
 func (c *Client) SetUserReservationStatus(
-	ctx context.Context, id, status string,
+	_ context.Context, id, status string,
 ) error {
 	resp, err := c.conn.R().
 		SetPathParam("id", id).

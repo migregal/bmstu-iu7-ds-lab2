@@ -53,7 +53,7 @@ func ParseErrors(err error) []ValidationError {
 
 	errs := []ValidationError{}
 
-	for _, str := range strings.Split(internal.Message.(string), ";") {
+	for _, str := range strings.Split(internal.Message.(string), ";") { //nolint: forcetypeassert
 		data := strings.SplitN(str, ":", 2)
 
 		errs = append(errs, ValidationError{strings.TrimSpace(data[0]), strings.TrimSpace(data[1])})

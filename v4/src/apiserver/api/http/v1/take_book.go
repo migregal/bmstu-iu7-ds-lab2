@@ -29,7 +29,8 @@ type TakeBookResponse struct {
 
 func (r TakeBookResponse) MarshalJSON() ([]byte, error) {
 	type Alias TakeBookResponse
-	return json.Marshal(&struct {
+
+	return json.Marshal(&struct { //nolint: wrapcheck
 		Alias
 		Start string `json:"startDate"`
 		End   string `json:"tillDate"`

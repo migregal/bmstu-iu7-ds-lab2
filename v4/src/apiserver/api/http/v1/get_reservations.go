@@ -23,7 +23,8 @@ type ReservationsResponse struct {
 
 func (r ReservationsResponse) MarshalJSON() ([]byte, error) {
 	type Alias ReservationsResponse
-	return json.Marshal(&struct {
+
+	return json.Marshal(&struct { //nolint: wrapcheck
 		Alias
 		Start string `json:"startDate"`
 		End   string `json:"tillDate"`

@@ -1,10 +1,9 @@
 package v1
 
 import (
+	"fmt"
 	"strings"
 	"time"
-
-	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/httpvalidator"
 )
 
 type AuthedRequest struct {
@@ -46,11 +45,6 @@ type Rating struct {
 	Stars uint64 `json:"stars"`
 }
 
-type ValidationErrorResponse struct {
-	Message string                          `json:"message"`
-	Errors  []httpvalidator.ValidationError `json:"errors"`
-}
-
 type Time struct {
 	time.Time `valid:"required"`
 }
@@ -66,5 +60,9 @@ func (ct *Time) UnmarshalJSON(b []byte) error {
 
 	ct.Time, err = time.Parse(time.DateOnly, s)
 
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to parse time: %w", err)
+	}
+
+	return nil
 }

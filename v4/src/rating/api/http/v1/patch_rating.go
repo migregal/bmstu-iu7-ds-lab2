@@ -16,6 +16,7 @@ func (a *api) UpdateRating(c echo.Context, req UpdateRatingRequest) error {
 	err := a.core.UpdateUserRating(c.Request().Context(), req.Username, req.Diff)
 	if err != nil {
 		a.lg.Error("failed to update user rating", "error", err)
+
 		return c.NoContent(http.StatusInternalServerError)
 	}
 

@@ -40,7 +40,6 @@ func (c *Core) GetLibrariesByIDs(
 	}
 
 	return libs, nil
-
 }
 
 func (c *Core) GetLibraryBooks(

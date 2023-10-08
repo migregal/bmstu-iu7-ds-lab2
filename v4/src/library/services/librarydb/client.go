@@ -158,7 +158,7 @@ func (d *DB) GetLibraryBooks(
 
 func (d *DB) GetLibraryBooksByIDs(
 	ctx context.Context, ids []string,
-) (resp libraries.LibraryBooks, err error) {
+) (libraries.LibraryBooks, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: true})
 
 	var books []Book
@@ -167,10 +167,13 @@ func (d *DB) GetLibraryBooksByIDs(
 	if err := stmt.Find(&books).Error; err != nil {
 		tx.Rollback()
 
-		return resp, fmt.Errorf("failed to select library books info: %w", err)
+		return libraries.LibraryBooks{}, fmt.Errorf("failed to select library books info: %w", err)
 	}
 
-	resp.Total = uint64(len(books))
+	resp := libraries.LibraryBooks{
+		Total: uint64(len(books)),
+	}
+
 	for _, book := range books {
 		resp.Items = append(resp.Items, libraries.Book{
 			ID:        book.ID.String(),
@@ -232,12 +235,13 @@ func (d *DB) TakeBookFromLibrary(
 			City:    libraryBook.LibraryRef.City,
 		},
 	}
+
 	return resp, nil
 }
 
 func (d *DB) ReturnBookToLibrary(
 	ctx context.Context, libraryID, bookID string,
-) (resp libraries.Book, err error) {
+) (libraries.Book, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 
 	var libraryBook LibraryBook
@@ -251,19 +255,19 @@ func (d *DB) ReturnBookToLibrary(
 
 		tx.Rollback()
 
-		return resp, fmt.Errorf("failed to update book info: %w", err)
+		return libraries.Book{}, fmt.Errorf("failed to update book info: %w", err)
 	}
 
 	stmt = tx.Model(&LibraryBook{}).Preload("BookRef")
 	if err := stmt.Where("id = ?", libraryBook.ID).First(&libraryBook).Error; err != nil {
 		tx.Rollback()
 
-		return resp, fmt.Errorf("failed to read book info: %w", err)
+		return libraries.Book{}, fmt.Errorf("failed to read book info: %w", err)
 	}
 
 	tx.Commit()
 
-	resp = libraries.Book{
+	resp := libraries.Book{
 		ID:        libraryBook.BookRef.ID.String(),
 		Name:      libraryBook.BookRef.Name,
 		Author:    libraryBook.BookRef.Author,
@@ -271,5 +275,6 @@ func (d *DB) ReturnBookToLibrary(
 		Condition: libraryBook.BookRef.Condition,
 		Available: libraryBook.AvailableCount,
 	}
+
 	return resp, nil
 }

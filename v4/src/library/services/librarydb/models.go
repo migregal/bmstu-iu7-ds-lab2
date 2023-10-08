@@ -17,7 +17,7 @@ type Book struct {
 	Name      string    `gorm:"size:255;not null"`
 	Author    string    `gorm:"size:255"`
 	Genre     string    `gorm:"size:255"`
-	Condition string    `gorm:"size:20;check:condition in ('EXCELLENT','GOOD','BAD');default:'EXCELLENT'"`
+	Condition string    `gorm:"size:20;check:condition in ('EXCELLENT','GOOD','BAD');default:'EXCELLENT'"` //nolint: lll
 }
 
 type LibraryBook struct {
