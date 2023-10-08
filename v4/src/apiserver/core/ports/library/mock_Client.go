@@ -77,6 +77,59 @@ func (_c *MockClient_GetBooks_Call) RunAndReturn(run func(context.Context, strin
 	return _c
 }
 
+// GetBooksByIDs provides a mock function with given fields: _a0, _a1
+func (_m *MockClient) GetBooksByIDs(_a0 context.Context, _a1 []string) (LibraryBooks, error) {
+	ret := _m.Called(_a0, _a1)
+
+	var r0 LibraryBooks
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, []string) (LibraryBooks, error)); ok {
+		return rf(_a0, _a1)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, []string) LibraryBooks); ok {
+		r0 = rf(_a0, _a1)
+	} else {
+		r0 = ret.Get(0).(LibraryBooks)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, []string) error); ok {
+		r1 = rf(_a0, _a1)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockClient_GetBooksByIDs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetBooksByIDs'
+type MockClient_GetBooksByIDs_Call struct {
+	*mock.Call
+}
+
+// GetBooksByIDs is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - _a1 []string
+func (_e *MockClient_Expecter) GetBooksByIDs(_a0 interface{}, _a1 interface{}) *MockClient_GetBooksByIDs_Call {
+	return &MockClient_GetBooksByIDs_Call{Call: _e.mock.On("GetBooksByIDs", _a0, _a1)}
+}
+
+func (_c *MockClient_GetBooksByIDs_Call) Run(run func(_a0 context.Context, _a1 []string)) *MockClient_GetBooksByIDs_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].([]string))
+	})
+	return _c
+}
+
+func (_c *MockClient_GetBooksByIDs_Call) Return(_a0 LibraryBooks, _a1 error) *MockClient_GetBooksByIDs_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockClient_GetBooksByIDs_Call) RunAndReturn(run func(context.Context, []string) (LibraryBooks, error)) *MockClient_GetBooksByIDs_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetLibraries provides a mock function with given fields: _a0, _a1, _a2, _a3
 func (_m *MockClient) GetLibraries(_a0 context.Context, _a1 string, _a2 uint64, _a3 uint64) (Libraries, error) {
 	ret := _m.Called(_a0, _a1, _a2, _a3)
@@ -132,18 +185,81 @@ func (_c *MockClient_GetLibraries_Call) RunAndReturn(run func(context.Context, s
 	return _c
 }
 
-// ObtainBook provides a mock function with given fields: _a0, _a1, _a2
-func (_m *MockClient) ObtainBook(_a0 context.Context, _a1 string, _a2 string) error {
-	ret := _m.Called(_a0, _a1, _a2)
+// GetLibrariesByIDs provides a mock function with given fields: _a0, _a1
+func (_m *MockClient) GetLibrariesByIDs(_a0 context.Context, _a1 []string) (Libraries, error) {
+	ret := _m.Called(_a0, _a1)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
-		r0 = rf(_a0, _a1, _a2)
+	var r0 Libraries
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, []string) (Libraries, error)); ok {
+		return rf(_a0, _a1)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, []string) Libraries); ok {
+		r0 = rf(_a0, _a1)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(Libraries)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, []string) error); ok {
+		r1 = rf(_a0, _a1)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockClient_GetLibrariesByIDs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetLibrariesByIDs'
+type MockClient_GetLibrariesByIDs_Call struct {
+	*mock.Call
+}
+
+// GetLibrariesByIDs is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - _a1 []string
+func (_e *MockClient_Expecter) GetLibrariesByIDs(_a0 interface{}, _a1 interface{}) *MockClient_GetLibrariesByIDs_Call {
+	return &MockClient_GetLibrariesByIDs_Call{Call: _e.mock.On("GetLibrariesByIDs", _a0, _a1)}
+}
+
+func (_c *MockClient_GetLibrariesByIDs_Call) Run(run func(_a0 context.Context, _a1 []string)) *MockClient_GetLibrariesByIDs_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].([]string))
+	})
+	return _c
+}
+
+func (_c *MockClient_GetLibrariesByIDs_Call) Return(_a0 Libraries, _a1 error) *MockClient_GetLibrariesByIDs_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockClient_GetLibrariesByIDs_Call) RunAndReturn(run func(context.Context, []string) (Libraries, error)) *MockClient_GetLibrariesByIDs_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ObtainBook provides a mock function with given fields: _a0, _a1, _a2
+func (_m *MockClient) ObtainBook(_a0 context.Context, _a1 string, _a2 string) (ReservedBook, error) {
+	ret := _m.Called(_a0, _a1, _a2)
+
+	var r0 ReservedBook
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) (ReservedBook, error)); ok {
+		return rf(_a0, _a1, _a2)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) ReservedBook); ok {
+		r0 = rf(_a0, _a1, _a2)
+	} else {
+		r0 = ret.Get(0).(ReservedBook)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(_a0, _a1, _a2)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // MockClient_ObtainBook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ObtainBook'
@@ -166,12 +282,66 @@ func (_c *MockClient_ObtainBook_Call) Run(run func(_a0 context.Context, _a1 stri
 	return _c
 }
 
-func (_c *MockClient_ObtainBook_Call) Return(_a0 error) *MockClient_ObtainBook_Call {
-	_c.Call.Return(_a0)
+func (_c *MockClient_ObtainBook_Call) Return(_a0 ReservedBook, _a1 error) *MockClient_ObtainBook_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockClient_ObtainBook_Call) RunAndReturn(run func(context.Context, string, string) error) *MockClient_ObtainBook_Call {
+func (_c *MockClient_ObtainBook_Call) RunAndReturn(run func(context.Context, string, string) (ReservedBook, error)) *MockClient_ObtainBook_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ReturnBook provides a mock function with given fields: _a0, _a1, _a2
+func (_m *MockClient) ReturnBook(_a0 context.Context, _a1 string, _a2 string) (Book, error) {
+	ret := _m.Called(_a0, _a1, _a2)
+
+	var r0 Book
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) (Book, error)); ok {
+		return rf(_a0, _a1, _a2)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) Book); ok {
+		r0 = rf(_a0, _a1, _a2)
+	} else {
+		r0 = ret.Get(0).(Book)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(_a0, _a1, _a2)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockClient_ReturnBook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ReturnBook'
+type MockClient_ReturnBook_Call struct {
+	*mock.Call
+}
+
+// ReturnBook is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - _a1 string
+//   - _a2 string
+func (_e *MockClient_Expecter) ReturnBook(_a0 interface{}, _a1 interface{}, _a2 interface{}) *MockClient_ReturnBook_Call {
+	return &MockClient_ReturnBook_Call{Call: _e.mock.On("ReturnBook", _a0, _a1, _a2)}
+}
+
+func (_c *MockClient_ReturnBook_Call) Run(run func(_a0 context.Context, _a1 string, _a2 string)) *MockClient_ReturnBook_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string), args[2].(string))
+	})
+	return _c
+}
+
+func (_c *MockClient_ReturnBook_Call) Return(_a0 Book, _a1 error) *MockClient_ReturnBook_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockClient_ReturnBook_Call) RunAndReturn(run func(context.Context, string, string) (Book, error)) *MockClient_ReturnBook_Call {
 	_c.Call.Return(run)
 	return _c
 }
