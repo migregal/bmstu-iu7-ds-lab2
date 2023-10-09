@@ -76,11 +76,10 @@ func (c *Core) GetUserRating(
 	return data, nil
 }
 
+// nolint: funlen // This one is complex but for now it is ok
 func (c *Core) GetUserReservations(
 	ctx context.Context, username string,
 ) ([]reservation.FullInfo, error) {
-	const sourcesN = 2
-
 	resvs, err := c.reservation.GetUserReservations(ctx, username, "")
 	if err != nil {
 		c.lg.ErrorContext(ctx, "failed to get list of user reservations", "error", err)
@@ -89,10 +88,10 @@ func (c *Core) GetUserReservations(
 	}
 
 	wg := sync.WaitGroup{}
-	wg.Add(sourcesN)
+	wg.Add(2) //nolint: gomnd
 
 	var (
-		errs      = make(chan error, sourcesN)
+		errs      = make(chan error, 2) //nolint: gomnd
 		libraries library.Infos
 		books     library.Books
 	)
@@ -173,6 +172,7 @@ func (c *Core) TakeBook(
 	resvs, err := c.reservation.GetUserReservations(ctx, username, "RENTED")
 	if err != nil {
 		c.lg.Warn("failed to get reservations", "error", err)
+
 		return reservation.FullInfo{}, fmt.Errorf("failed to get user reservations: %w", err)
 	}
 
@@ -259,6 +259,7 @@ func (c *Core) ReturnBook(
 
 		if err = c.rating.UpdateUserRating(ctx, username, -10); err != nil {
 			c.lg.Warn("failed to update user rating", "error", err)
+
 			return fmt.Errorf("failed to update user rating: %w", err)
 		}
 	}

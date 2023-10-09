@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/httpwrapper"
 	"github.com/migregal/bmstu-iu7-ds-lab2/rating/core/ports/ratings"
 )

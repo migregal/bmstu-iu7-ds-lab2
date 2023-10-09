@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"github.com/google/uuid"
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/readiness"
 )
 

@@ -24,19 +24,19 @@ func WrapRequest[T any](
 		if err := binder.Bind(&req, c); err != nil {
 			lg.Warn("failed to bind request", "error", err)
 
-			return c.String(http.StatusBadRequest, "bad request")
+			return c.String(http.StatusBadRequest, "bad request") //nolint: wrapcheck
 		}
 
 		if err := binder.BindQueryParams(c, &req); err != nil {
 			lg.Warn("failed to bind headers", "error", err)
 
-			return c.String(http.StatusBadRequest, "bad request")
+			return c.String(http.StatusBadRequest, "bad request") //nolint: wrapcheck
 		}
 
 		if err := binder.BindHeaders(c, &req); err != nil {
 			lg.Warn("failed to bind headers", "error", err)
 
-			return c.String(http.StatusBadRequest, "bad request")
+			return c.String(http.StatusBadRequest, "bad request") //nolint: wrapcheck
 		}
 
 		if err := c.Validate(req); err != nil {

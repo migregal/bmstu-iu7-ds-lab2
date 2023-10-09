@@ -28,6 +28,7 @@ linters:
     - depguard
     - exhaustruct
     - tagalign
+    - nolintlint
   presets:
     - bugs
     - comment
@@ -71,6 +72,7 @@ linters-settings:
       - .NoContent(
       - .NewHTTPError(
       - .Redirect(
+      - errors.New
   varnamelen:
     max-distance: 6
     min-name-length: 1

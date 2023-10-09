@@ -14,7 +14,6 @@ type RatingResponse struct {
 	Stars uint64 `json:"stars" valid:"range(0|100),required"`
 }
 
-
 func (a *api) GetRating(c echo.Context, req RatingRequest) error {
 	data, err := a.core.GetUserRating(c.Request().Context(), req.Username)
 	if err != nil {

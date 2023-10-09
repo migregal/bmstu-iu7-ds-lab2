@@ -2,6 +2,7 @@ package rating
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
+
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/rating"
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/readiness"
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/readiness/httpprober"
@@ -17,6 +19,8 @@ import (
 )
 
 const probeKey = "http-rating-client"
+
+var ErrInvalidStatusCode = errors.New("invalid status code")
 
 type Client struct {
 	lg *slog.Logger
@@ -27,8 +31,8 @@ type Client struct {
 func New(lg *slog.Logger, cfg rating.Config, probe *readiness.Probe) (*Client, error) {
 	client := resty.New().
 		SetTransport(&http.Transport{
-			MaxIdleConns:       10,
-			IdleConnTimeout:    30 * time.Second,
+			MaxIdleConns:       10,               //nolint: gomnd
+			IdleConnTimeout:    30 * time.Second, //nolint: gomnd
 			DisableCompression: true,
 		}).
 		SetBaseURL(fmt.Sprintf("http://%s", net.JoinHostPort(cfg.Host, cfg.Port)))
@@ -44,7 +48,7 @@ func New(lg *slog.Logger, cfg rating.Config, probe *readiness.Probe) (*Client, e
 }
 
 func (c *Client) GetUserRating(
-	ctx context.Context, username string,
+	_ context.Context, username string,
 ) (rating.Rating, error) {
 	resp, err := c.conn.R().
 		SetHeader("X-User-Name", username).
@@ -55,7 +59,7 @@ func (c *Client) GetUserRating(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return rating.Rating{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return rating.Rating{}, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.RatingResponse)
@@ -66,7 +70,7 @@ func (c *Client) GetUserRating(
 }
 
 func (c *Client) UpdateUserRating(
-	ctx context.Context, username string, diff int,
+	_ context.Context, username string, diff int,
 ) error {
 	resp, err := c.conn.R().
 		SetHeader("X-User-Name", username).
@@ -78,7 +82,7 @@ func (c *Client) UpdateUserRating(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	return nil

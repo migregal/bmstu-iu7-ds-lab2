@@ -55,6 +55,7 @@ func (ct *Time) UnmarshalJSON(b []byte) error {
 	s := strings.Trim(string(b), "\"")
 	if s == "null" {
 		ct.Time = time.Time{}
+
 		return nil
 	}
 

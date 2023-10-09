@@ -7,8 +7,8 @@ import (
 )
 
 type ReturnBookRequest struct {
-	LibraryID     string `param:"lib_id" valid:"uuidv4,required"`
-	BookID        string `param:"book_id" valid:"uuidv4,required"`
+	LibraryID string `param:"lib_id" valid:"uuidv4,required"`
+	BookID    string `param:"book_id" valid:"uuidv4,required"`
 }
 
 type ReturnBookResponse struct {

@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/go-resty/resty/v2"
+
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/readiness"
 )
 

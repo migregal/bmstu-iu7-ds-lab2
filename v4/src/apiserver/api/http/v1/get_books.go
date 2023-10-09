@@ -20,7 +20,9 @@ type BooksResponse struct {
 }
 
 func (a *api) GetLibraryBooks(c echo.Context, req BooksRequest) error {
-	books, err := a.core.GetLibraryBooks(c.Request().Context(), req.LibraryID, req.ShowAll, req.Page, req.Size)
+	books, err := a.core.GetLibraryBooks(
+		c.Request().Context(), req.LibraryID, req.ShowAll, req.Page, req.Size,
+	)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}

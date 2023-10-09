@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/library"
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/rating"
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/reservation"
@@ -17,7 +18,9 @@ type Core interface {
 	GetLibraryBooks(context.Context, string, bool, uint64, uint64) (library.Books, error)
 	GetUserRating(ctx context.Context, username string) (rating.Rating, error)
 	GetUserReservations(context.Context, string) ([]reservation.FullInfo, error)
-	TakeBook(ctx context.Context, usename, libraryID, bookID string, end time.Time) (reservation.FullInfo, error)
+	TakeBook(
+		ctx context.Context, usename, libraryID, bookID string, end time.Time,
+	) (reservation.FullInfo, error)
 	ReturnBook(ctx context.Context, username, reservationID, condition string, date time.Time) error
 }
 

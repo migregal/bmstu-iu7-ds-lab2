@@ -37,7 +37,7 @@ func New(lg *slog.Logger, cfg ratings.Config, probe *readiness.Probe) (*DB, erro
 }
 
 func (d *DB) GetUserRating(
-	ctx context.Context, username string,
+	_ context.Context, username string,
 ) (ratings.Rating, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 
@@ -71,7 +71,7 @@ func (d *DB) GetUserRating(
 }
 
 func (d *DB) UpdateUserRating(
-	ctx context.Context, username string, diff int,
+	_ context.Context, username string, diff int,
 ) error {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 

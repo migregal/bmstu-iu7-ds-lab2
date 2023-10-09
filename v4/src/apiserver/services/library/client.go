@@ -3,6 +3,7 @@ package library
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"math"
@@ -21,6 +22,8 @@ import (
 
 const probeKey = "http-library-client"
 
+var ErrInvalidStatusCode = errors.New("invalid status code")
+
 type Client struct {
 	lg *slog.Logger
 
@@ -30,8 +33,8 @@ type Client struct {
 func New(lg *slog.Logger, cfg library.Config, probe *readiness.Probe) (*Client, error) {
 	client := resty.New().
 		SetTransport(&http.Transport{
-			MaxIdleConns:       10,
-			IdleConnTimeout:    30 * time.Second,
+			MaxIdleConns:       10,               //nolint: gomnd
+			IdleConnTimeout:    30 * time.Second, //nolint: gomnd
 			DisableCompression: true,
 		}).
 		SetBaseURL(fmt.Sprintf("http://%s", net.JoinHostPort(cfg.Host, cfg.Port)))
@@ -52,12 +55,13 @@ func (c *Client) GetLibraries(
 	q := map[string]string{
 		"city": city,
 		"page": strconv.FormatUint(page, 10),
-		"size": strconv.FormatUint(size, 10),
 	}
 
 	if size == 0 {
 		size = math.MaxUint64
 	}
+
+	q["size"] = strconv.FormatUint(size, 10)
 
 	resp, err := c.conn.R().
 		SetQueryParams(q).
@@ -68,7 +72,7 @@ func (c *Client) GetLibraries(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return library.Infos{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return library.Infos{}, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.LibrariesResponse)
@@ -81,7 +85,7 @@ func (c *Client) GetLibraries(
 	return libraries, nil
 }
 
-//nolint: dupl
+// nolint: dupl
 func (c *Client) GetLibrariesByIDs(
 	_ context.Context, ids []string,
 ) (library.Infos, error) {
@@ -99,7 +103,7 @@ func (c *Client) GetLibrariesByIDs(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return library.Infos{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return library.Infos{}, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.LibrariesResponse)
@@ -138,7 +142,7 @@ func (c *Client) GetBooks(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return library.Books{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return library.Books{}, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.BooksResponse)
@@ -151,7 +155,7 @@ func (c *Client) GetBooks(
 	return books, nil
 }
 
-//nolint: dupl
+// nolint: dupl
 func (c *Client) GetBooksByIDs(
 	_ context.Context, ids []string,
 ) (library.Books, error) {
@@ -169,7 +173,7 @@ func (c *Client) GetBooksByIDs(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return library.Books{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return library.Books{}, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.BooksResponse)
@@ -203,7 +207,7 @@ func (c *Client) ObtainBook(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return library.ReservedBook{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return library.ReservedBook{}, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.TakeBookResponse)
@@ -237,7 +241,7 @@ func (c *Client) ReturnBook(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return library.Book{}, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return library.Book{}, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.ReturnBookResponse)

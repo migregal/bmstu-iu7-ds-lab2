@@ -3,7 +3,6 @@ package librarydb
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"log/slog"
 
@@ -38,7 +37,7 @@ func New(lg *slog.Logger, cfg libraries.Config, probe *readiness.Probe) (*DB, er
 }
 
 func (d *DB) GetLibraries(
-	ctx context.Context, city string, page uint64, size uint64,
+	_ context.Context, city string, page uint64, size uint64,
 ) (libraries.Libraries, error) {
 	resp := libraries.Libraries{}
 
@@ -84,18 +83,19 @@ func (d *DB) GetLibraries(
 }
 
 func (d *DB) GetLibrariesByIDs(
-	ctx context.Context, ids []string,
-) (resp libraries.Libraries, err error) {
+	_ context.Context, ids []string,
+) (libraries.Libraries, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: true})
 
 	var libs []Library
 	if err := tx.Where("id in ?", ids).Find(&libs).Error; err != nil {
 		tx.Rollback()
 
-		return resp, fmt.Errorf("failed to find libraries info: %w", err)
+		return libraries.Libraries{}, fmt.Errorf("failed to find libraries info: %w", err)
 	}
 
-	resp.Total = uint64(len(libs))
+	resp := libraries.Libraries{Total: uint64(len(libs))}
+
 	for _, lib := range libs {
 		resp.Items = append(resp.Items, libraries.Library{
 			ID:      lib.ID.String(),
@@ -111,8 +111,8 @@ func (d *DB) GetLibrariesByIDs(
 }
 
 func (d *DB) GetLibraryBooks(
-	ctx context.Context, libraryID string, showAll bool, page uint64, size uint64,
-) (resp libraries.LibraryBooks, err error) {
+	_ context.Context, libraryID string, showAll bool, page uint64, size uint64,
+) (libraries.LibraryBooks, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: true})
 
 	stmt := tx.Model(&LibraryBook{}).Where("fk_library_id = ?", libraryID)
@@ -124,7 +124,7 @@ func (d *DB) GetLibraryBooks(
 	if err := stmt.Count(&count).Error; err != nil {
 		tx.Rollback()
 
-		return resp, fmt.Errorf("failed to count library books info: %w", err)
+		return libraries.LibraryBooks{}, fmt.Errorf("failed to count library books info: %w", err)
 	}
 
 	stmt = tx.Offset(int((page-1)*size)).Limit(int(size)).Where("fk_library_id = ?", libraryID)
@@ -136,10 +136,11 @@ func (d *DB) GetLibraryBooks(
 	if err := stmt.Preload("BookRef").Find(&libraryBooks).Error; err != nil {
 		tx.Rollback()
 
-		return resp, fmt.Errorf("failed to select library books info: %w", err)
+		return libraries.LibraryBooks{}, fmt.Errorf("failed to select library books info: %w", err)
 	}
 
-	resp.Total = uint64(count)
+	resp := libraries.LibraryBooks{Total: uint64(count)}
+
 	for _, book := range libraryBooks {
 		resp.Items = append(resp.Items, libraries.Book{
 			ID:        book.BookRef.ID.String(),
@@ -157,7 +158,7 @@ func (d *DB) GetLibraryBooks(
 }
 
 func (d *DB) GetLibraryBooksByIDs(
-	ctx context.Context, ids []string,
+	_ context.Context, ids []string,
 ) (libraries.LibraryBooks, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: true})
 
@@ -190,7 +191,7 @@ func (d *DB) GetLibraryBooksByIDs(
 }
 
 func (d *DB) TakeBookFromLibrary(
-	ctx context.Context, libraryID, bookID string,
+	_ context.Context, libraryID, bookID string,
 ) (libraries.ReservedBook, error) {
 	resp := libraries.ReservedBook{}
 
@@ -201,11 +202,10 @@ func (d *DB) TakeBookFromLibrary(
 	stmt = stmt.Where("fk_library_id = ?", libraryID).Where("fk_book_id = ?", bookID)
 
 	if err := stmt.Update("available_count", gorm.Expr("available_count - 1")).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			// TODO: add not found err
-		}
-
 		tx.Rollback()
+
+		// if errors.Is(err, gorm.ErrRecordNotFound) {
+		// }
 
 		return resp, fmt.Errorf("failed to update book info: %w", err)
 	}
@@ -240,7 +240,7 @@ func (d *DB) TakeBookFromLibrary(
 }
 
 func (d *DB) ReturnBookToLibrary(
-	ctx context.Context, libraryID, bookID string,
+	_ context.Context, libraryID, bookID string,
 ) (libraries.Book, error) {
 	tx := d.db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
 
@@ -249,11 +249,10 @@ func (d *DB) ReturnBookToLibrary(
 	stmt = stmt.Where("fk_library_id = ?", libraryID).Where("fk_book_id = ?", bookID)
 
 	if err := stmt.Update("available_count", gorm.Expr("available_count + 1")).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			// TODO: add not found err
-		}
-
 		tx.Rollback()
+
+		// if errors.Is(err, gorm.ErrRecordNotFound) {
+		// }
 
 		return libraries.Book{}, fmt.Errorf("failed to update book info: %w", err)
 	}

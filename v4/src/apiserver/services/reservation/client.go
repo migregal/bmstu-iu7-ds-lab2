@@ -3,6 +3,7 @@ package reservation
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
+
 	"github.com/migregal/bmstu-iu7-ds-lab2/apiserver/core/ports/reservation"
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/readiness"
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/readiness/httpprober"
@@ -17,6 +19,8 @@ import (
 )
 
 const probeKey = "http-reservation-client"
+
+var ErrInvalidStatusCode = errors.New("invalid status code")
 
 type Client struct {
 	lg *slog.Logger
@@ -27,8 +31,8 @@ type Client struct {
 func New(lg *slog.Logger, cfg reservation.Config, probe *readiness.Probe) (*Client, error) {
 	client := resty.New().
 		SetTransport(&http.Transport{
-			MaxIdleConns:       10,
-			IdleConnTimeout:    30 * time.Second,
+			MaxIdleConns:       10,               //nolint: gomnd
+			IdleConnTimeout:    30 * time.Second, //nolint: gomnd
 			DisableCompression: true,
 		}).
 		SetBaseURL(fmt.Sprintf("http://%s", net.JoinHostPort(cfg.Host, cfg.Port)))
@@ -61,7 +65,7 @@ func (c *Client) GetUserReservations(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return nil, fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return nil, fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*[]v1.Reservation)
@@ -105,7 +109,7 @@ func (c *Client) AddUserReservation(_ context.Context, rsrvtn reservation.Info) 
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return "", fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return "", fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	data, _ := resp.Result().(*v1.AddReservationResponse)
@@ -125,7 +129,7 @@ func (c *Client) SetUserReservationStatus(
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return fmt.Errorf("invalid status code: %d", resp.StatusCode())
+		return fmt.Errorf("%d: %w", resp.StatusCode(), ErrInvalidStatusCode)
 	}
 
 	return nil

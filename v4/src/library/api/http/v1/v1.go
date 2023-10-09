@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/migregal/bmstu-iu7-ds-lab2/library/core/ports/libraries"
 	"github.com/migregal/bmstu-iu7-ds-lab2/pkg/httpwrapper"
 )
@@ -22,7 +23,7 @@ type api struct {
 	core Core
 }
 
-func InitListener(mx *echo.Echo,  lg *slog.Logger, core Core) error {
+func InitListener(mx *echo.Echo, lg *slog.Logger, core Core) error {
 	gr := mx.Group("/api/v1")
 
 	a := api{core: core}

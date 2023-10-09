@@ -5,9 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/labstack/echo/v4"
-
 	valid "github.com/asaskevich/govalidator"
+	"github.com/labstack/echo/v4"
 )
 
 func init() { //nolint: gochecknoinits
@@ -54,7 +53,7 @@ func ParseErrors(err error) []ValidationError {
 	errs := []ValidationError{}
 
 	for _, str := range strings.Split(internal.Message.(string), ";") { //nolint: forcetypeassert
-		data := strings.SplitN(str, ":", 2)
+		data := strings.SplitN(str, ":", 2) //nolint: gomnd
 
 		errs = append(errs, ValidationError{strings.TrimSpace(data[0]), strings.TrimSpace(data[1])})
 	}
