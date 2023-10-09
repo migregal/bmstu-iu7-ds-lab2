@@ -26,8 +26,7 @@ jobs:
       - name: Run containers
         timeout-minutes: 5
         run: |
-          docker compose up -d
-          ./scripts/wait-script.sh
+          docker compose up -d --wait --wait-timeout 300
         env:
           WAIT_PORTS: 8080,8070,8060,8050
 
